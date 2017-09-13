@@ -8,7 +8,7 @@ import play.api.libs.json.Json
 
 object Main extends App{
 
-  val API_KEY = "PMGX9ASKF5L4PW7E"
+  val API_KEY = "XXX"
 
   override def main(args: Array[String]) {
 

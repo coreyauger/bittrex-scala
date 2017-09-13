@@ -2,6 +2,7 @@
 *.log
 
 # sbt specific
+src/main/resources/application.conf
 .cache
 .history
 .lib/
