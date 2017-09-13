@@ -18,7 +18,6 @@ object Main extends App{
     implicit val system: ActorSystem = ActorSystem()
     implicit val materializer = ActorMaterializer(ActorMaterializerSettings(system).withSupervisionStrategy(decider))
 /*
-
     import scala.concurrent.duration._
     val request: _root_.akka.http.scaladsl.model.HttpRequest = RequestBuilding.Get(Uri("https://www.alphavantage.co/query?function=TIME_SERIES_INTRADAY&symbol=MSFT&interval=1min&apikey=PMGX9ASKF5L4PW7E"))
     val source: Source[HttpRequest, Cancellable] = Source.tick(0.seconds, 20.seconds, request)
@@ -29,19 +28,142 @@ object Main extends App{
 
     //val msft = AlphaVantageTimeSeries("MSFT", AlphaVantage.Interval.`1min`)
     //msft.json.runForeach(i => i.foreach(x => x.foreach(println) ) )(materializer)
-   /* try {
-      val fx = AlphaVantage.FullTimeSeries.get("MSFT", AlphaVantage.Interval.daily)
-      fx.foreach { x =>
-        println(s"GOT IT: ${x.`Time Series`.series.length}")
-      }
-      Thread.currentThread.join()
-    }catch{
-      case t:Throwable =>
-        t.printStackTrace()
-    }*/
-
 
     try {
+      val json =
+        """
+          |{
+          |	"success": true,
+          |	"message": "",
+          |	"result": [{
+          |		"MarketCurrency": "LTC",
+          |		"BaseCurrency": "BTC",
+          |		"MarketCurrencyLong": "Litecoin",
+          |		"BaseCurrencyLong": "Bitcoin",
+          |		"MinTradeSize": 0.00000001,
+          |		"MarketName": "BTC-LTC",
+          |		"IsActive": true,
+          |		"Created": "2014-02-13T00:00:00",
+          |		"Notice": null,
+          |		"IsSponsored": null,
+          |		"LogoUrl": "https://bittrexblobstorage.blob.core.windows.net/public/6defbc41-582d-47a6-bb2e-d0fa88663524.png"
+          |	}, {
+          |		"MarketCurrency": "DOGE",
+          |		"BaseCurrency": "BTC",
+          |		"MarketCurrencyLong": "Dogecoin",
+          |		"BaseCurrencyLong": "Bitcoin",
+          |		"MinTradeSize": 0.00000001,
+          |		"MarketName": "BTC-DOGE",
+          |		"IsActive": true,
+          |		"Created": "2014-02-13T00:00:00",
+          |		"Notice": null,
+          |		"IsSponsored": null,
+          |		"LogoUrl": "https://bittrexblobstorage.blob.core.windows.net/public/a2b8eaee-2905-4478-a7a0-246f212c64c6.png"
+          |	}, {
+          |		"MarketCurrency": "VTC",
+          |		"BaseCurrency": "BTC",
+          |		"MarketCurrencyLong": "Vertcoin",
+          |		"BaseCurrencyLong": "Bitcoin",
+          |		"MinTradeSize": 0.00000001,
+          |		"MarketName": "BTC-VTC",
+          |		"IsActive": true,
+          |		"Created": "2014-02-13T00:00:00",
+          |		"Notice": null,
+          |		"IsSponsored": null,
+          |		"LogoUrl": "https://bittrexblobstorage.blob.core.windows.net/public/1f0317bc-c44b-4ea4-8a89-b9a71f3349c8.png"
+          |	}, {
+          |		"MarketCurrency": "PPC",
+          |		"BaseCurrency": "BTC",
+          |		"MarketCurrencyLong": "Peercoin",
+          |		"BaseCurrencyLong": "Bitcoin",
+          |		"MinTradeSize": 0.00000001,
+          |		"MarketName": "BTC-PPC",
+          |		"IsActive": true,
+          |		"Created": "2014-02-13T00:00:00",
+          |		"Notice": null,
+          |		"IsSponsored": null,
+          |		"LogoUrl": null
+          |	}, {
+          |		"MarketCurrency": "FTC",
+          |		"BaseCurrency": "BTC",
+          |		"MarketCurrencyLong": "Feathercoin",
+          |		"BaseCurrencyLong": "Bitcoin",
+          |		"MinTradeSize": 0.00000001,
+          |		"MarketName": "BTC-FTC",
+          |		"IsActive": true,
+          |		"Created": "2014-02-13T00:00:00",
+          |		"Notice": null,
+          |		"IsSponsored": null,
+          |		"LogoUrl": "https://bittrexblobstorage.blob.core.windows.net/public/a69f83f0-112c-4d98-8e14-5e0e9be47404.png"
+          |	}, {
+          |		"MarketCurrency": "RDD",
+          |		"BaseCurrency": "BTC",
+          |		"MarketCurrencyLong": "ReddCoin",
+          |		"BaseCurrencyLong": "Bitcoin",
+          |		"MinTradeSize": 0.00000001,
+          |		"MarketName": "BTC-RDD",
+          |		"IsActive": true,
+          |		"Created": "2014-02-25T09:00:00",
+          |		"Notice": null,
+          |		"IsSponsored": null,
+          |		"LogoUrl": "https://bittrexblobstorage.blob.core.windows.net/public/4b7ce5a5-8c12-4741-86f2-3a48cb55c91a.png"
+          |	}, {
+          |		"MarketCurrency": "NXT",
+          |		"BaseCurrency": "BTC",
+          |		"MarketCurrencyLong": "NXT",
+          |		"BaseCurrencyLong": "Bitcoin",
+          |		"MinTradeSize": 0.00000001,
+          |		"MarketName": "BTC-NXT",
+          |		"IsActive": true,
+          |		"Created": "2014-03-03T09:00:00",
+          |		"Notice": null,
+          |		"IsSponsored": null,
+          |		"LogoUrl": "https://bittrexblobstorage.blob.core.windows.net/public/443d492d-4f8b-4a2d-a613-1b37e4ab80cd.png"
+          |	}, {
+          |		"MarketCurrency": "DASH",
+          |		"BaseCurrency": "BTC",
+          |		"MarketCurrencyLong": "Dash",
+          |		"BaseCurrencyLong": "Bitcoin",
+          |		"MinTradeSize": 0.00000001,
+          |		"MarketName": "BTC-DASH",
+          |		"IsActive": true,
+          |		"Created": "2014-03-11T08:00:00",
+          |		"Notice": null,
+          |		"IsSponsored": null,
+          |		"LogoUrl": "https://bittrexblobstorage.blob.core.windows.net/public/49993d38-d344-4197-b449-c50c3cc13d47.png"
+          |	}, {
+          |		"MarketCurrency": "POT",
+          |		"BaseCurrency": "BTC",
+          |		"MarketCurrencyLong": "PotCoin",
+          |		"BaseCurrencyLong": "Bitcoin",
+          |		"MinTradeSize": 0.00000001,
+          |		"MarketName": "BTC-POT",
+          |		"IsActive": true,
+          |		"Created": "2014-03-11T08:00:00",
+          |		"Notice": null,
+          |		"IsSponsored": null,
+          |		"LogoUrl": "https://bittrexblobstorage.blob.core.windows.net/public/149a1a49-3cca-461b-a8e4-8ea8409c27bd.png"
+          |	}, {
+          |		"MarketCurrency": "BLK",
+          |		"BaseCurrency": "BTC",
+          |		"MarketCurrencyLong": "BlackCoin",
+          |		"BaseCurrencyLong": "Bitcoin",
+          |		"MinTradeSize": 0.00000001,
+          |		"MarketName": "BTC-BLK",
+          |		"IsActive": true,
+          |		"Created": "2014-03-14T09:00:00",
+          |		"Notice": null,
+          |		"IsSponsored": false,
+          |		"LogoUrl": "https://bittrexblobstorage.blob.core.windows.net/public/c3409d42-a907-4764-ad03-118917761cc2.png"
+          |	}
+          |    ]
+          |}
+          |
+        """.stripMargin
+
+      val test = Json.parse(json).as[AlphaVantage.Response[AlphaVantage.Market]]
+      println(s"test: ${test}")
+
       /*println("calling EMA")
       val fx = AlphaVantage.AlphaVantageEMA.get("MSFT", AlphaVantage.Interval.`1min`, 60)
       fx.foreach { x =>
@@ -53,106 +175,26 @@ object Main extends App{
         println(s"GOT IT: ${x}")
       }*/
 
-      println("calling STOCHF")
+      val api = new BittrexApi()
+      import AlphaVantage._
+      val fx =  api.getMarkets
+      println(s"fx: ${fx}")
+      fx.foreach { x =>
+        println(s"GOT IT: ${x}")
+      }
+
+     /* println("calling STOCHF")
       val fx3 = AlphaVantage.AlphaVantageStochasticFast.get("MSFT", AlphaVantage.Interval.`1min`, 10, 3)
       fx3.foreach { x =>
         println(s"GOT IT: ${x}")
-      }
+      }*/
       Thread.currentThread.join()
-/*
-      val json =
-        """
-          |{
-          |  "Meta Data": {
-          |    "1: Symbol": "MSFT",
-          |    "2: Indicator": "Exponential Moving Average (EMA)",
-          |    "3: Last Refreshed": "2017-08-01 12:15:00",
-          |    "4: Interval": "5min",
-          |    "5: Time Period": 60,
-          |    "6: Series Type": "close",
-          |    "7: Time Zone": "US/Eastern"
-          |  },
-          |  "Technical Analysis: EMA": {
-          |    "2017-08-01 12:15": {
-          |      "EMA": "72.9170"
-          |    },
-          |    "2017-08-01 12:10": {
-          |      "EMA": "72.9182"
-          |    },
-          |    "2017-08-01 12:05": {
-          |      "EMA": "72.9204"
-          |    }
-          |  }
-          |}
-        """.stripMargin
 
-      val test = Json.parse(json).as[AlphaVantage.EMAResponse]
-      println(s"test: ${test}")*/
+
     }catch{
       case t:Throwable =>
         t.printStackTrace()
     }
-
-
-
-   /* val json =
-      """
-        |{
-        |     "Meta Data": {
-        |         "1. Information": "Intraday (1min) prices and volumes",
-        |         "2. Symbol": "MSFT",
-        |         "3. Last Refreshed": "2017-07-18 16:00:00",
-        |         "4. Interval": "1min",
-        |         "5. Output Size": "Compact",
-        |         "6. Time Zone": "US/Eastern"
-        |     },
-        |     "Time Series (1min)": {
-        |         "2017-07-18 16:00:00": {
-        |             "1. open": "73.2200",
-        |             "2. high": "73.3000",
-        |             "3. low": "73.2100",
-        |             "4. close": "73.3000",
-        |             "5. volume": "3010033"
-        |         },
-        |         "2017-07-18 15:59:00": {
-        |             "1. open": "73.1600",
-        |             "2. high": "73.2200",
-        |             "3. low": "73.1500",
-        |             "4. close": "73.2200",
-        |             "5. volume": "255033"
-        |         },
-        |         "2017-07-18 15:58:00": {
-        |             "1. open": "73.1250",
-        |             "2. high": "73.1600",
-        |             "3. low": "73.1200",
-        |             "4. close": "73.1500",
-        |             "5. volume": "197744"
-        |         },
-        |         "2017-07-18 15:57:00": {
-        |             "1. open": "73.1250",
-        |             "2. high": "73.1300",
-        |             "3. low": "73.1200",
-        |             "4. close": "73.1250",
-        |             "5. volume": "115770"
-        |         },
-        |         "2017-07-18 15:56:00": {
-        |             "1. open": "73.1200",
-        |             "2. high": "73.1300",
-        |             "3. low": "73.1200",
-        |             "4. close": "73.1300",
-        |             "5. volume": "68468"
-        |         }
-        |     }
-        |}
-      """.stripMargin
-    import AlphaVantage._
-    try {
-      println(Json.parse(json).as[TimeSeriesResponse])
-    }catch{
-      case t: Throwable =>
-        println(t.getMessage)
-        t.printStackTrace()
-    }*/
 
   }
 

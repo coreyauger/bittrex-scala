@@ -16,7 +16,7 @@ import scala.concurrent.duration.FiniteDuration
 import scala.util.Try
 
 trait Bittrex{
-  val apisecret = "602ce0c2b016466ab8b5b8d63c77d4b7"
+  val apisecret = "XXX"
 }
 
 /**
@@ -24,7 +24,7 @@ trait Bittrex{
   */
 class BittrexPoller(url: String, interval: FiniteDuration, hoursOpt: Option[DateTimeZone] = None)(implicit system: ActorSystem, materializer: Materializer) extends Bittrex {
   import scala.concurrent.duration._
-  val apisign = url.hmac(apisecret).sha512
+  val apisign = url.hmac(apisecret).sha512.hex
   val request: _root_.akka.http.scaladsl.model.HttpRequest = RequestBuilding.Get(Uri(url)).addHeader(RawHeader("apisign", apisign))
   val source: Source[HttpRequest, Cancellable] = Source.tick(0.seconds, interval, request).filter{ _ =>
     hoursOpt.map{ timezone =>
@@ -43,7 +43,11 @@ class BittrexPoller(url: String, interval: FiniteDuration, hoursOpt: Option[Date
 
 class BittrexSignedRequester(implicit system: ActorSystem, materializer: Materializer) extends Bittrex{
   def get(url: String) = {
-    val apisign = url.hmac(apisecret).sha512
+    val apisign = url.hmac(apisecret).sha512.hex
+    println(
+      s"""
+         |curl --header "apisign:${apisign}" "${url}"
+       """.stripMargin)
     Http().singleRequest(HttpRequest(uri = url).addHeader(RawHeader("apisign", apisign)))
   }
 }
