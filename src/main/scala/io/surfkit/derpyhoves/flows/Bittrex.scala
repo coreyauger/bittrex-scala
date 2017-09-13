@@ -21,7 +21,7 @@ import org.joda.time.DateTime
 /**
   * Created by suroot on 18/07/17.
   */
-object Bitrex{
+object Bittrex{
   sealed trait BX
 
   val API_KEY = "XXX"
@@ -73,8 +73,8 @@ object Bitrex{
 
 }
 
-class BittrexInterval[T <: Bitrex.BX(function: String,symbol: String, interval: FiniteDuration, tz: DateTimeZone)(implicit system: ActorSystem, materializer: Materializer, um: Reads[T]) extends BittrexPoller(
-  url = s"https://www.alphavantage.co/query?function=${function}&symbol=${symbol}&interval=${interval}&apikey=${Bitrex.API_KEY}",
+class BittrexInterval[T <: Bittrex.BX](function: String,symbol: String, interval: FiniteDuration, tz: DateTimeZone)(implicit system: ActorSystem, materializer: Materializer, um: Reads[T]) extends BittrexPoller(
+  url = s"https://",
   interval = interval, Some(tz)) with PlayJsonSupport{
 
   def json(): Source[Try[Future[T]], Cancellable] = super.apply().map{
@@ -90,18 +90,18 @@ class BittrexInterval[T <: Bitrex.BX(function: String,symbol: String, interval: 
 
 class BittrexApi(implicit system: ActorSystem, materializer: Materializer) extends PlayJsonSupport {
 
-  val aoiKey = "390521dbfd4040c28e6f536e209cb94"
+  val aoiKey = "XXX"
 
   def nounce = new DateTime().getMillis() / 1000
   object api extends BittrexSignedRequester
 
-  def getMarkets()(implicit um: Reads[Bitrex.Response[Bitrex.Market]]) = {
+  def getMarkets()(implicit um: Reads[Bittrex.Response[Bittrex.Market]]) = {
     api.get(s"https://bittrex.com/api/v1.1/public/getmarkets?apikey=${aoiKey}&nonce=${nounce}").flatMap { response =>
       /*val bs: Future[ByteString] = response.entity.toStrict(1 minute).map { _.data }
       val s: Future[String] = bs.map(_.utf8String) // if you indeed need a `String`
       s.foreach(println)
 */
-      Unmarshal(response.entity).to[Bitrex.Response[Bitrex.Market]]
+      Unmarshal(response.entity).to[Bittrex.Response[Bittrex.Market]]
     }
   }
 }

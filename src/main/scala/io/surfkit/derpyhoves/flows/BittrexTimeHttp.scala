@@ -15,14 +15,14 @@ import com.roundeights.hasher.Implicits._
 import scala.concurrent.duration.FiniteDuration
 import scala.util.Try
 
-trait Bittrex{
+trait BittrexInternals{
   val apisecret = "XXX"
 }
 
 /**
   * Created by suroot on 18/07/17.
   */
-class BittrexPoller(url: String, interval: FiniteDuration, hoursOpt: Option[DateTimeZone] = None)(implicit system: ActorSystem, materializer: Materializer) extends Bittrex {
+class BittrexPoller(url: String, interval: FiniteDuration, hoursOpt: Option[DateTimeZone] = None)(implicit system: ActorSystem, materializer: Materializer) extends BittrexInternals {
   import scala.concurrent.duration._
   val apisign = url.hmac(apisecret).sha512.hex
   val request: _root_.akka.http.scaladsl.model.HttpRequest = RequestBuilding.Get(Uri(url)).addHeader(RawHeader("apisign", apisign))
@@ -41,7 +41,7 @@ class BittrexPoller(url: String, interval: FiniteDuration, hoursOpt: Option[Date
   }
 }
 
-class BittrexSignedRequester(implicit system: ActorSystem, materializer: Materializer) extends Bittrex{
+class BittrexSignedRequester(implicit system: ActorSystem, materializer: Materializer) extends BittrexInternals{
   def get(url: String) = {
     val apisign = url.hmac(apisecret).sha512.hex
     println(

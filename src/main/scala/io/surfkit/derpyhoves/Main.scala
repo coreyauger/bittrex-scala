@@ -161,7 +161,7 @@ object Main extends App{
           |
         """.stripMargin
 
-      val test = Json.parse(json).as[AlphaVantage.Response[AlphaVantage.Market]]
+      val test = Json.parse(json).as[Bittrex.Response[Bittrex.Market]]
       println(s"test: ${test}")
 
       /*println("calling EMA")
@@ -176,7 +176,7 @@ object Main extends App{
       }*/
 
       val api = new BittrexApi()
-      import AlphaVantage._
+      import Bittrex._
       val fx =  api.getMarkets
       println(s"fx: ${fx}")
       fx.foreach { x =>
