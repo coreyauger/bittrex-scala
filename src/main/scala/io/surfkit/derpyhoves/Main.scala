@@ -3,8 +3,12 @@ package io.surfkit.derpyhoves
 import akka.actor.ActorSystem
 import akka.stream.{ActorMaterializer, ActorMaterializerSettings, Supervision}
 import io.surfkit.derpyhoves.flows._
+import scala.concurrent.duration._
+
 import scala.concurrent.ExecutionContext.Implicits.global
 import play.api.libs.json.Json
+
+import scala.concurrent.Await
 
 object Main extends App{
 
@@ -36,151 +40,85 @@ object Main extends App{
           |	"success": true,
           |	"message": "",
           |	"result": [{
-          |		"MarketCurrency": "LTC",
-          |		"BaseCurrency": "BTC",
-          |		"MarketCurrencyLong": "Litecoin",
-          |		"BaseCurrencyLong": "Bitcoin",
-          |		"MinTradeSize": 0.00000001,
-          |		"MarketName": "BTC-LTC",
-          |		"IsActive": true,
-          |		"Created": "2014-02-13T00:00:00",
-          |		"Notice": null,
-          |		"IsSponsored": null,
-          |		"LogoUrl": "https://bittrexblobstorage.blob.core.windows.net/public/6defbc41-582d-47a6-bb2e-d0fa88663524.png"
+          |		"Id": 71879268,
+          |		"TimeStamp": "2017-09-16T07:00:25.867",
+          |		"Quantity": 0.97524605,
+          |		"Price": 0.01429901,
+          |		"Total": 0.01394505,
+          |		"FillType": "PARTIAL_FILL",
+          |		"OrderType": "SELL"
           |	}, {
-          |		"MarketCurrency": "DOGE",
-          |		"BaseCurrency": "BTC",
-          |		"MarketCurrencyLong": "Dogecoin",
-          |		"BaseCurrencyLong": "Bitcoin",
-          |		"MinTradeSize": 0.00000001,
-          |		"MarketName": "BTC-DOGE",
-          |		"IsActive": true,
-          |		"Created": "2014-02-13T00:00:00",
-          |		"Notice": null,
-          |		"IsSponsored": null,
-          |		"LogoUrl": "https://bittrexblobstorage.blob.core.windows.net/public/a2b8eaee-2905-4478-a7a0-246f212c64c6.png"
+          |		"Id": 71879256,
+          |		"TimeStamp": "2017-09-16T07:00:22.99",
+          |		"Quantity": 20.00000000,
+          |		"Price": 0.01433100,
+          |		"Total": 0.28662000,
+          |		"FillType": "FILL",
+          |		"OrderType": "BUY"
           |	}, {
-          |		"MarketCurrency": "VTC",
-          |		"BaseCurrency": "BTC",
-          |		"MarketCurrencyLong": "Vertcoin",
-          |		"BaseCurrencyLong": "Bitcoin",
-          |		"MinTradeSize": 0.00000001,
-          |		"MarketName": "BTC-VTC",
-          |		"IsActive": true,
-          |		"Created": "2014-02-13T00:00:00",
-          |		"Notice": null,
-          |		"IsSponsored": null,
-          |		"LogoUrl": "https://bittrexblobstorage.blob.core.windows.net/public/1f0317bc-c44b-4ea4-8a89-b9a71f3349c8.png"
-          |	}, {
-          |		"MarketCurrency": "PPC",
-          |		"BaseCurrency": "BTC",
-          |		"MarketCurrencyLong": "Peercoin",
-          |		"BaseCurrencyLong": "Bitcoin",
-          |		"MinTradeSize": 0.00000001,
-          |		"MarketName": "BTC-PPC",
-          |		"IsActive": true,
-          |		"Created": "2014-02-13T00:00:00",
-          |		"Notice": null,
-          |		"IsSponsored": null,
-          |		"LogoUrl": null
-          |	}, {
-          |		"MarketCurrency": "FTC",
-          |		"BaseCurrency": "BTC",
-          |		"MarketCurrencyLong": "Feathercoin",
-          |		"BaseCurrencyLong": "Bitcoin",
-          |		"MinTradeSize": 0.00000001,
-          |		"MarketName": "BTC-FTC",
-          |		"IsActive": true,
-          |		"Created": "2014-02-13T00:00:00",
-          |		"Notice": null,
-          |		"IsSponsored": null,
-          |		"LogoUrl": "https://bittrexblobstorage.blob.core.windows.net/public/a69f83f0-112c-4d98-8e14-5e0e9be47404.png"
-          |	}, {
-          |		"MarketCurrency": "RDD",
-          |		"BaseCurrency": "BTC",
-          |		"MarketCurrencyLong": "ReddCoin",
-          |		"BaseCurrencyLong": "Bitcoin",
-          |		"MinTradeSize": 0.00000001,
-          |		"MarketName": "BTC-RDD",
-          |		"IsActive": true,
-          |		"Created": "2014-02-25T09:00:00",
-          |		"Notice": null,
-          |		"IsSponsored": null,
-          |		"LogoUrl": "https://bittrexblobstorage.blob.core.windows.net/public/4b7ce5a5-8c12-4741-86f2-3a48cb55c91a.png"
-          |	}, {
-          |		"MarketCurrency": "NXT",
-          |		"BaseCurrency": "BTC",
-          |		"MarketCurrencyLong": "NXT",
-          |		"BaseCurrencyLong": "Bitcoin",
-          |		"MinTradeSize": 0.00000001,
-          |		"MarketName": "BTC-NXT",
-          |		"IsActive": true,
-          |		"Created": "2014-03-03T09:00:00",
-          |		"Notice": null,
-          |		"IsSponsored": null,
-          |		"LogoUrl": "https://bittrexblobstorage.blob.core.windows.net/public/443d492d-4f8b-4a2d-a613-1b37e4ab80cd.png"
-          |	}, {
-          |		"MarketCurrency": "DASH",
-          |		"BaseCurrency": "BTC",
-          |		"MarketCurrencyLong": "Dash",
-          |		"BaseCurrencyLong": "Bitcoin",
-          |		"MinTradeSize": 0.00000001,
-          |		"MarketName": "BTC-DASH",
-          |		"IsActive": true,
-          |		"Created": "2014-03-11T08:00:00",
-          |		"Notice": null,
-          |		"IsSponsored": null,
-          |		"LogoUrl": "https://bittrexblobstorage.blob.core.windows.net/public/49993d38-d344-4197-b449-c50c3cc13d47.png"
-          |	}, {
-          |		"MarketCurrency": "POT",
-          |		"BaseCurrency": "BTC",
-          |		"MarketCurrencyLong": "PotCoin",
-          |		"BaseCurrencyLong": "Bitcoin",
-          |		"MinTradeSize": 0.00000001,
-          |		"MarketName": "BTC-POT",
-          |		"IsActive": true,
-          |		"Created": "2014-03-11T08:00:00",
-          |		"Notice": null,
-          |		"IsSponsored": null,
-          |		"LogoUrl": "https://bittrexblobstorage.blob.core.windows.net/public/149a1a49-3cca-461b-a8e4-8ea8409c27bd.png"
-          |	}, {
-          |		"MarketCurrency": "BLK",
-          |		"BaseCurrency": "BTC",
-          |		"MarketCurrencyLong": "BlackCoin",
-          |		"BaseCurrencyLong": "Bitcoin",
-          |		"MinTradeSize": 0.00000001,
-          |		"MarketName": "BTC-BLK",
-          |		"IsActive": true,
-          |		"Created": "2014-03-14T09:00:00",
-          |		"Notice": null,
-          |		"IsSponsored": false,
-          |		"LogoUrl": "https://bittrexblobstorage.blob.core.windows.net/public/c3409d42-a907-4764-ad03-118917761cc2.png"
-          |	}
-          |    ]
+          |		"Id": 71879246,
+          |		"TimeStamp": "2017-09-16T07:00:21.367",
+          |		"Quantity": 1.00000000,
+          |		"Price": 0.01433100,
+          |		"Total": 0.01433100,
+          |		"FillType": "FILL",
+          |		"OrderType": "BUY"
+          |	}]
           |}
-          |
         """.stripMargin
 
-      val test = Json.parse(json).as[Bittrex.Response[Bittrex.Market]]
+      val test = Json.parse(json).as[Bittrex.Response[Bittrex.MarketHistory]]
       println(s"test: ${test}")
-
-      /*println("calling EMA")
-      val fx = AlphaVantage.AlphaVantageEMA.get("MSFT", AlphaVantage.Interval.`1min`, 60)
-      fx.foreach { x =>
-        println(s"GOT IT: ")
-      }*/
-      /*println("calling MACD")
-      val fx2 = AlphaVantage.AlphaVantageMACD.get("MSFT", AlphaVantage.Interval.`1min`)
-      fx2.foreach { x =>
-        println(s"GOT IT: ${x}")
-      }*/
 
       val api = new BittrexApi()
       import Bittrex._
-      val fx =  api.getMarkets
-      println(s"fx: ${fx}")
-      fx.foreach { x =>
-        println(s"GOT IT: ${x}")
+      val fx = api.getOrderHistory()
+      val f =  Await.ready(fx, 10 seconds)
+      println(s"fx: ${f}")
+
+      val bx = api.getBalances()
+      val b =  Await.ready(bx, 10 seconds)
+      println(s"fx: ${b}")
+
+
+      val ax = api.getOrder("uuid")
+      ax.recover{
+        case t:Throwable => t.printStackTrace()
+      }
+      val a =  Await.ready(ax, 10 seconds)
+      println(s"fx: ${a}")
+
+     /* try {
+        val ticker = BittrexTicker("BTC-LTC", 1 minute)
+        ticker.json.runForeach{i =>
+          print(".")
+          i.map(x => x.map(println) ).recover{
+            case t: Throwable =>
+              println("error")
+              t.printStackTrace()
+              throw t
+          }
+        }(materializer)
+      }catch{
+        case t:Throwable =>
+          t.printStackTrace()
+      }
+*/
+
+      try {
+        val hist = BittrexMarketHistory("BTC-LTC", 1 minute)
+        hist.intervalPrice.runForeach{i =>
+          print(".")
+          i.map(println).recover{
+            case t: Throwable =>
+              println("error")
+              t.printStackTrace()
+              throw t
+          }
+        }(materializer)
+      }catch{
+        case t:Throwable =>
+          t.printStackTrace()
       }
 
      /* println("calling STOCHF")

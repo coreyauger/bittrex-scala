@@ -27,6 +27,7 @@ lazy val deps = {
     "com.typesafe.akka"       %% "akka-stream"                % akkaV,
     "com.typesafe.akka"       %% "akka-http"                  % "10.0.9",
     "com.typesafe.play"       %% "play-json"                  % akkaV,
+    "com.typesafe.play"       %% "play-json-joda"             % "2.6.0",
     "de.heikoseeberger"       %% "akka-http-play-json"        % "1.17.0",
     "com.roundeights"         %% "hasher"                     % "1.2.0"
   )
