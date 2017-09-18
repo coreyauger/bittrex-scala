@@ -236,10 +236,10 @@ class BittrexInterval[T <: Bittrex.BX](function: String, interval: FiniteDuratio
 }
 
 case class BittrexTicker(market: String, interval: FiniteDuration)(implicit system: ActorSystem, materializer: Materializer)
-  extends BittrexInterval[Bittrex.TickResponse](s"/public/getticker?market=${market}", interval, "")
+  extends BittrexInterval[Bittrex.TickResponse](s"/public/getticker?market=${market}", interval, "publis")
 
 case class BittrexMarketHistory(market: String, interval: FiniteDuration)(implicit system: ActorSystem, materializer: Materializer)
-  extends BittrexInterval[Bittrex.Response[Bittrex.MarketHistory]](s"/public/getmarkethistory?market=${market}", interval, ""){
+  extends BittrexInterval[Bittrex.Response[Bittrex.MarketHistory]](s"/public/getmarkethistory?market=${market}", interval, "public"){
 
   def intervalPrice: Source[Future[Bittrex.IntervalPrice], Cancellable] =
     super.json().map{ future =>

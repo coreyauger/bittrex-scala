@@ -76,6 +76,7 @@ object Main extends App{
 
       val api = new BittrexApi(aoiKey, apiSecret)
       import Bittrex._
+/*
       val fx = api.getOrderHistory()
       val f =  Await.ready(fx, 10 seconds)
       println(s"fx: ${f}")
@@ -91,6 +92,7 @@ object Main extends App{
       }
       val a =  Await.ready(ax, 10 seconds)
       println(s"fx: ${a}")
+*/
 
      /* try {
         val ticker = BittrexTicker("BTC-LTC", 1 minute)
