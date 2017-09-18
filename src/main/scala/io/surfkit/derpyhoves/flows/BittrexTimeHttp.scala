@@ -15,14 +15,10 @@ import com.roundeights.hasher.Implicits._
 import scala.concurrent.duration.FiniteDuration
 import scala.util.Try
 
-trait BittrexInternals{
-  val apisecret = "XXX"
-}
-
 /**
   * Created by suroot on 18/07/17.
   */
-class BittrexPoller(url: String, interval: FiniteDuration)(implicit system: ActorSystem, materializer: Materializer) extends BittrexInternals {
+class BittrexPoller(url: String, interval: FiniteDuration, apisecret:String)(implicit system: ActorSystem, materializer: Materializer){
   import scala.concurrent.duration._
   val apisign = url.hmac(apisecret).sha512.hex
   println(
@@ -40,7 +36,7 @@ class BittrexPoller(url: String, interval: FiniteDuration)(implicit system: Acto
   }
 }
 
-class BittrexSignedRequester(implicit system: ActorSystem, materializer: Materializer) extends BittrexInternals{
+class BittrexSignedRequester(apisecret: String)(implicit system: ActorSystem, materializer: Materializer){
   def get(url: String) = {
     val apisign = url.hmac(apisecret).sha512.hex
     println(

@@ -222,9 +222,9 @@ object Bittrex{
 
 }
 
-class BittrexInterval[T <: Bittrex.BX](function: String, interval: FiniteDuration)(implicit system: ActorSystem, materializer: Materializer, um: Reads[T]) extends BittrexPoller(
+class BittrexInterval[T <: Bittrex.BX](function: String, interval: FiniteDuration, secret: String)(implicit system: ActorSystem, materializer: Materializer, um: Reads[T]) extends BittrexPoller(
   url = s"https://bittrex.com/api/v1.1${function}",
-  interval = interval) with PlayJsonSupport{
+  interval = interval, apisecret = secret) with PlayJsonSupport{
 
   def json(): Source[Future[T], Cancellable] = super.apply().map{
     case scala.util.Success(response) => Unmarshal(response.entity).to[T]
@@ -235,10 +235,10 @@ class BittrexInterval[T <: Bittrex.BX](function: String, interval: FiniteDuratio
 }
 
 case class BittrexTicker(market: String, interval: FiniteDuration)(implicit system: ActorSystem, materializer: Materializer)
-  extends BittrexInterval[Bittrex.TickResponse](s"/public/getticker?market=${market}", interval)
+  extends BittrexInterval[Bittrex.TickResponse](s"/public/getticker?market=${market}", interval, "")
 
 case class BittrexMarketHistory(market: String, interval: FiniteDuration)(implicit system: ActorSystem, materializer: Materializer)
-  extends BittrexInterval[Bittrex.Response[Bittrex.MarketHistory]](s"/public/getmarkethistory?market=${market}", interval){
+  extends BittrexInterval[Bittrex.Response[Bittrex.MarketHistory]](s"/public/getmarkethistory?market=${market}", interval, ""){
 
   def intervalPrice: Source[Future[Bittrex.IntervalPrice], Cancellable] =
     super.json().map{ future =>
@@ -255,58 +255,57 @@ case class BittrexMarketHistory(market: String, interval: FiniteDuration)(implic
 }
 
 
-class BittrexApi(implicit system: ActorSystem, materializer: Materializer) extends PlayJsonSupport {
+class BittrexApi(apiKey: String, secret: String)(implicit system: ActorSystem, materializer: Materializer) extends PlayJsonSupport {
 
   val baseAddress = "https://bittrex.com/api/v1.1"
-  val aoiKey = "XXX"
 
   def nounce = new DateTime().getMillis() / 1000
-  object api extends BittrexSignedRequester
+  object api extends BittrexSignedRequester(secret)
 
   def responseUnmarshal[T <: Bittrex.BX](response: HttpResponse)(implicit um: Reads[T]):Future[T] = Unmarshal(response.entity).to[T]
 
   def getMarkets()(implicit um: Reads[Bittrex.Response[Bittrex.Market]]) =
-    api.get(s"${baseAddress}/public/getmarkets?apikey=${aoiKey}&nonce=${nounce}").flatMap(x => responseUnmarshal(x) )
+    api.get(s"${baseAddress}/public/getmarkets?apikey=${apiKey}&nonce=${nounce}").flatMap(x => responseUnmarshal(x) )
 
   def getCurrency()(implicit um: Reads[Bittrex.Response[Bittrex.Currency]]) =
-    api.get(s"${baseAddress}/public/getcurrencies?apikey=${aoiKey}&nonce=${nounce}").flatMap(x => responseUnmarshal(x) )
+    api.get(s"${baseAddress}/public/getcurrencies?apikey=${apiKey}&nonce=${nounce}").flatMap(x => responseUnmarshal(x) )
 
   def getTicker(market: String)(implicit um: Reads[Bittrex.Response[Bittrex.Tick]]) =
-    api.get(s"${baseAddress}/public/getcurrencies?apikey=${aoiKey}&nonce=${nounce}&market=${market}").flatMap(x => responseUnmarshal(x) )
+    api.get(s"${baseAddress}/public/getcurrencies?apikey=${apiKey}&nonce=${nounce}&market=${market}").flatMap(x => responseUnmarshal(x) )
 
   def getMarketSummaries ()(implicit um: Reads[Bittrex.Response[Bittrex.MarketSummary]]) =
-    api.get(s"${baseAddress}/public/getmarketsummaries?apikey=${aoiKey}&nonce=${nounce}").flatMap(x => responseUnmarshal(x) )
+    api.get(s"${baseAddress}/public/getmarketsummaries?apikey=${apiKey}&nonce=${nounce}").flatMap(x => responseUnmarshal(x) )
 
   def getMarketSummary (market: String)(implicit um: Reads[Bittrex.Response[Bittrex.MarketSummary]]) =
-    api.get(s"${baseAddress}/public/getmarketsummary?apikey=${aoiKey}&nonce=${nounce}&market=${market}").flatMap(x => responseUnmarshal(x) )
+    api.get(s"${baseAddress}/public/getmarketsummary?apikey=${apiKey}&nonce=${nounce}&market=${market}").flatMap(x => responseUnmarshal(x) )
 
   def getOrderBook (market: String)(implicit um: Reads[Bittrex.Response[Bittrex.OrderBook]]) =
-    api.get(s"${baseAddress}/public/getorderbook?apikey=${aoiKey}&nonce=${nounce}&market=${market}").flatMap(x => responseUnmarshal(x) )
+    api.get(s"${baseAddress}/public/getorderbook?apikey=${apiKey}&nonce=${nounce}&market=${market}").flatMap(x => responseUnmarshal(x) )
 
   def getMarketHistory (market: String)(implicit um: Reads[Bittrex.Response[Bittrex.MarketHistory]]) =
-    api.get(s"${baseAddress}/public/getmarkethistory?apikey=${aoiKey}&nonce=${nounce}&market=${market}").flatMap(x => responseUnmarshal(x) )
+    api.get(s"${baseAddress}/public/getmarkethistory?apikey=${apiKey}&nonce=${nounce}&market=${market}").flatMap(x => responseUnmarshal(x) )
 
   def buyLimit (market: String, quantity: Double, rate: Double)(implicit um: Reads[Bittrex.Response[Bittrex.BuyLimit]]) =
-    api.get(s"${baseAddress}/market/buylimit?apikey=${aoiKey}&nonce=${nounce}&market=${market}&quantity=${quantity}&rate=${rate}").flatMap(x => responseUnmarshal(x) )
+    api.get(s"${baseAddress}/market/buylimit?apikey=${apiKey}&nonce=${nounce}&market=${market}&quantity=${quantity}&rate=${rate}").flatMap(x => responseUnmarshal(x) )
 
   def sellLimit (market: String, quantity: Double, rate: Double)(implicit um: Reads[Bittrex.Response[Bittrex.SellLimit]]) =
-    api.get(s"${baseAddress}/market/selllimit?apikey=${aoiKey}&nonce=${nounce}&market=${market}&quantity=${quantity}&rate=${rate}").flatMap(x => responseUnmarshal(x) )
+    api.get(s"${baseAddress}/market/selllimit?apikey=${apiKey}&nonce=${nounce}&market=${market}&quantity=${quantity}&rate=${rate}").flatMap(x => responseUnmarshal(x) )
 
   def cancel (uuid: String)(implicit um: Reads[Bittrex.Response[Bittrex.Empty]]) =
-    api.get(s"${baseAddress}/market/cancel?apikey=${aoiKey}&nonce=${nounce}&uuid=${uuid}").flatMap(x => responseUnmarshal(x) )
+    api.get(s"${baseAddress}/market/cancel?apikey=${apiKey}&nonce=${nounce}&uuid=${uuid}").flatMap(x => responseUnmarshal(x) )
 
   def getOpenOrders (market: String)(implicit um: Reads[Bittrex.Response[Bittrex.Order]]) =
-    api.get(s"${baseAddress}/market/getopenorders?apikey=${aoiKey}&nonce=${nounce}&market=${market}").flatMap(x => responseUnmarshal(x) )
+    api.get(s"${baseAddress}/market/getopenorders?apikey=${apiKey}&nonce=${nounce}&market=${market}").flatMap(x => responseUnmarshal(x) )
 
   def getBalances()(implicit um: Reads[Bittrex.Response[Bittrex.AccountBalance]]) =
-    api.get(s"${baseAddress}/account/getbalances?apikey=${aoiKey}&nonce=${nounce}").flatMap(x => responseUnmarshal(x) )
+    api.get(s"${baseAddress}/account/getbalances?apikey=${apiKey}&nonce=${nounce}").flatMap(x => responseUnmarshal(x) )
 
   def getBalance(currency: String)(implicit um: Reads[Bittrex.Response[Bittrex.AccountBalance]]) =
-    api.get(s"${baseAddress}/account/getbalance?apikey=${aoiKey}&nonce=${nounce}&currency=${currency}").flatMap(x => responseUnmarshal(x) )
+    api.get(s"${baseAddress}/account/getbalance?apikey=${apiKey}&nonce=${nounce}&currency=${currency}").flatMap(x => responseUnmarshal(x) )
 
   def getOrder(uuid: String)(implicit um: Reads[Bittrex.Response[Bittrex.Order]]) =
-    api.get(s"${baseAddress}/account/getorder?apikey=${aoiKey}&nonce=${nounce}&uuid=${uuid}").flatMap(x => responseUnmarshal(x) )
+    api.get(s"${baseAddress}/account/getorder?apikey=${apiKey}&nonce=${nounce}&uuid=${uuid}").flatMap(x => responseUnmarshal(x) )
 
   def getOrderHistory(market: Option[String] = None)(implicit um: Reads[Bittrex.Response[Bittrex.OrderHistory]]) =
-    api.get(s"${baseAddress}/account/getorderhistory?apikey=${aoiKey}&nonce=${nounce}${market.map(m => s"&market=${m}").getOrElse("")}").flatMap(x => responseUnmarshal(x) )
+    api.get(s"${baseAddress}/account/getorderhistory?apikey=${apiKey}&nonce=${nounce}${market.map(m => s"&market=${m}").getOrElse("")}").flatMap(x => responseUnmarshal(x) )
 }

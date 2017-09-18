@@ -70,7 +70,11 @@ object Main extends App{
       val test = Json.parse(json).as[Bittrex.Response[Bittrex.MarketHistory]]
       println(s"test: ${test}")
 
-      val api = new BittrexApi()
+
+      val aoiKey = "XXX"
+      val apiSecret = "XXX"
+
+      val api = new BittrexApi(aoiKey, apiSecret)
       import Bittrex._
       val fx = api.getOrderHistory()
       val f =  Await.ready(fx, 10 seconds)
