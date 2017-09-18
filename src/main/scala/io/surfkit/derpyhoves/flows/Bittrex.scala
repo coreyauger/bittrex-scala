@@ -37,6 +37,7 @@ object Bittrex{
 
   case class IntervalPrice(
                             ts: DateTime,
+                            volume: Double,
                             open: Double,
                             close: Double,
                             high: Double,
@@ -248,8 +249,8 @@ case class BittrexMarketHistory(market: String, interval: FiniteDuration)(implic
         val minuteHistory = history.result.getOrElse(Seq.empty).filter(x => x.TimeStamp.isAfter(lastMin))
         val high = minuteHistory.map(_.Price).max
         val low = minuteHistory.map(_.Price).min
-
-        Bittrex.IntervalPrice(now, minuteHistory.last.Price, minuteHistory.head.Price, high, low)
+        val volume = minuteHistory.filter(_.OrderType == "SELL").map(_.Price).sum
+        Bittrex.IntervalPrice(now, volume, minuteHistory.last.Price, minuteHistory.head.Price, high, low)
       }
     }
 }
