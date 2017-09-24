@@ -241,16 +241,25 @@ case class BittrexTicker(market: String, interval: FiniteDuration)(implicit syst
 case class BittrexMarketHistory(market: String, interval: FiniteDuration)(implicit system: ActorSystem, materializer: Materializer)
   extends BittrexInterval[Bittrex.Response[Bittrex.MarketHistory]](s"/public/getmarkethistory?market=${market}", interval, "public"){
 
+  var last = 0.0
+
   def intervalPrice: Source[Future[Bittrex.IntervalPrice], Cancellable] =
     super.json().map{ future =>
       future.map{ history =>
         val now = DateTime.now()
         val lastMin = now.plusMinutes(-1)
         val minuteHistory = history.result.getOrElse(Seq.empty).filter(x => x.TimeStamp.isAfter(lastMin))
-        val high = minuteHistory.map(_.Price).max
-        val low = minuteHistory.map(_.Price).min
-        val volume = minuteHistory.filter(_.OrderType == "SELL").map(_.Price).sum
-        Bittrex.IntervalPrice(now, volume, minuteHistory.last.Price, minuteHistory.head.Price, high, low)
+        minuteHistory match{
+          case Seq() =>
+            Bittrex.IntervalPrice(now, 0, last, last, last, last)
+          case _ =>
+            val high = minuteHistory.map(_.Price).max
+            val low = minuteHistory.map(_.Price).min
+            val volume = minuteHistory.filter(_.OrderType == "SELL").map(_.Price).sum
+            last = minuteHistory.head.Price
+            Bittrex.IntervalPrice(now, volume, minuteHistory.last.Price, minuteHistory.head.Price, high, low)
+        }
+
       }
     }
 }
