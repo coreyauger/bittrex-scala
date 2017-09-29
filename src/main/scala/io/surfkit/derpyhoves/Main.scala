@@ -36,38 +36,10 @@ object Main extends App{
     try {
       val json =
         """
-          |{
-          |	"success": true,
-          |	"message": "",
-          |	"result": [{
-          |		"Id": 71879268,
-          |		"TimeStamp": "2017-09-16T07:00:25.867",
-          |		"Quantity": 0.97524605,
-          |		"Price": 0.01429901,
-          |		"Total": 0.01394505,
-          |		"FillType": "PARTIAL_FILL",
-          |		"OrderType": "SELL"
-          |	}, {
-          |		"Id": 71879256,
-          |		"TimeStamp": "2017-09-16T07:00:22.99",
-          |		"Quantity": 20.00000000,
-          |		"Price": 0.01433100,
-          |		"Total": 0.28662000,
-          |		"FillType": "FILL",
-          |		"OrderType": "BUY"
-          |	}, {
-          |		"Id": 71879246,
-          |		"TimeStamp": "2017-09-16T07:00:21.367",
-          |		"Quantity": 1.00000000,
-          |		"Price": 0.01433100,
-          |		"Total": 0.01433100,
-          |		"FillType": "FILL",
-          |		"OrderType": "BUY"
-          |	}]
-          |}
+          |{"success":true,"message":"","result":{"Currency":"BTC","Balance":0.08107020,"Available":0.08107020,"Pending":0.00000000,"CryptoAddress":null}}
         """.stripMargin
 
-      val test = Json.parse(json).as[Bittrex.Response[Bittrex.MarketHistory]]
+      val test = Json.parse(json).as[Bittrex.ResponseSingle[Bittrex.AccountBalance]]
       println(s"test: ${test}")
 
 
@@ -76,6 +48,10 @@ object Main extends App{
 
       val api = new BittrexApi(aoiKey, apiSecret)
       import Bittrex._
+
+      val fx = api.getBalance("BTC")
+      val f =  Await.ready(fx, 10 seconds)
+      println(s"fx: ${f}")
 /*
       val fx = api.getOrderHistory()
       val f =  Await.ready(fx, 10 seconds)
@@ -110,7 +86,7 @@ object Main extends App{
           t.printStackTrace()
       }
 */
-
+/*
       try {
         val hist = BittrexMarketHistory("BTC-LTC", 1 minute)
         hist.intervalPrice.runForeach{i =>
@@ -125,7 +101,7 @@ object Main extends App{
       }catch{
         case t:Throwable =>
           t.printStackTrace()
-      }
+      }*/
 
      /* println("calling STOCHF")
       val fx3 = AlphaVantage.AlphaVantageStochasticFast.get("MSFT", AlphaVantage.Interval.`1min`, 10, 3)
